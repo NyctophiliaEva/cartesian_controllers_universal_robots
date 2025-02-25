@@ -15,10 +15,10 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     this_pkg = FindPackageShare("cartesian_controllers_universal_robots")
-
+    description_package = LaunchConfiguration("description_package")
     # Declare arguments
     arg_robot_ip = DeclareLaunchArgument(
-        "robot_ip", default_value="192.168.1.9", description="The robot's IP address"
+        "robot_ip", default_value="192.168.1.101", description="The ur3 robot's IP address"
     )
     declared_args = [arg_robot_ip]
 
