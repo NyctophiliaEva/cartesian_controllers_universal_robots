@@ -1,0 +1,65 @@
+<?xml version="1.1"?>
+<robot name="setup"
+  xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro" />
+
+  <link name="world" />
+  <joint name="world_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="world" />
+    <child link="base_link" />
+  </joint>
+
+  <xacro:ur_robot name="ur3" 
+      tf_prefix="" parent="world" 
+      joint_limits_parameters_file="$(find ur_description)/config/ur3/joint_limits.yaml" 
+      kinematics_parameters_file="$(find cartesian_controllers_universal_robots)/config/test_calibration.yaml" 
+      physical_parameters_file="$(find ur_description)/config/ur3/physical_parameters.yaml" 
+      visual_parameters_file="$(find ur_description)/config/ur3/visual_parameters.yaml" 
+      use_fake_hardware="true" 
+      sim_gazebo="true">
+    <origin xyz="0 0.0 0.0" rpy="0 0 0" />
+  </xacro:ur_robot>
+
+  <ros2_control name="ur3" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="shoulder_pan_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="shoulder_lift_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="elbow_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="wrist_1_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="wrist_2_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="wrist_3_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find cartesian_controllers_universal_robots)/config/motion_manager_init_pose.yaml</parameters>
+    </plugin>
+  </gazebo>
+</robot>
