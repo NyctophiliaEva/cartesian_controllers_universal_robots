@@ -1,6 +1,8 @@
 # -----------------------------------------------------------------------------
-# \file    robot.launch.py
+# \file    robot_cartesian.launch.py
+# \author  Nyctophilia Rein <nyctophiliaEva@rein.ubuntu>
 #
+# \refer   robot.launch.py
 # \author  Stefan Scherzinger <scherzin@fzi.de>
 # \date    2023/05/30
 #
