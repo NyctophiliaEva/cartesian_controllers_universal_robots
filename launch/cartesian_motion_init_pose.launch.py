@@ -1,11 +1,12 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess
 from launch.actions import TimerAction
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+
 
 
 def generate_launch_description():
@@ -87,43 +88,51 @@ def generate_launch_description():
         )
 
     def switch_controller(stop_controller, start_controller, delay=0.0):
-        return [
-            TimerAction(
-                period=delay,
-                actions=[
-                    Node(
-                        package="controller_manager",
-                        executable="spawner",
-                        output="screen",
-                        arguments=[
-                            "controller_manager", "switch_controllers", "--deactivate",
-                            stop_controller, "--strict"],
-                    )
-                ],
-            ),
-            TimerAction(
-                period=delay + 1.0,
-                actions=[
-                    Node(
-                        package="controller_manager",
-                        executable="spawner",
-                        output="screen",
-                        arguments=[
-                            "controller_manager", "switch_controllers", "--activate",
-                            start_controller, "--strict"],
-                    )
-                ],
-            )
-        ] 
+        return TimerAction(
+            period=delay,
+            actions=[
+                ExecuteProcess(
+                    cmd=['ros2', 'control', 'switch_controllers',
+                         '--deactivate', stop_controller,
+                         '--activate', start_controller],
+                    output='screen',
+                )
+            ],
+        )
+
+    def send_initial_position():
+        """Helper function to create initial position command"""
+        return TimerAction(
+            period=5.0,  # Wait for controllers to be ready
+            actions=[
+                ExecuteProcess(
+                    cmd=['ros2', 'topic', 'pub', '--once',
+                        '/initial_position_controller/joint_trajectory',
+                        'trajectory_msgs/msg/JointTrajectory',
+                        '{' +
+                        '"header": {"frame_id": "base"},' +
+                        '"joint_names": ["shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint", "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"],' +
+                        '"points": [{"positions": [0.0, -1.57, 1.57, -1.57, -1.57, 4.71],' +
+                        # '"velocities": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],' +
+                        # '"accelerations": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],' +
+                        '"time_from_start": {"sec": 2, "nanosec": 0}}]' +
+                        '}'
+                        ],
+                    output='screen',
+                )
+            ]
+        )
+
 
     controller_spawners = [
         # Joint state broadcaster should start first
         spawn_controller("joint_state_broadcaster"),
-        spawn_controller("initial_position_controller", delay=2.0),
+        spawn_controller("initial_position_controller", delay=1.0),
         spawn_controller("cartesian_motion_controller", "--inactive", delay=1.0),
-        # switch_controller(
-        #     stop_controller="initial_position_controller",
-        #     start_controller="cartesian_motion_controller", delay=2.0),
+        send_initial_position(),
+        switch_controller(
+            stop_controller="initial_position_controller",
+            start_controller="cartesian_motion_controller", delay=15.0),
     ]
 
     nodes = [
@@ -131,6 +140,6 @@ def generate_launch_description():
         robot_state_publisher,
         gazebo,
         spawn_entity,
-    ] + controller_spawners  # + [rviz]
+    ] + controller_spawners # + [rviz]
 
-    return LaunchDescription(declared_args + nodes)
+    return LaunchDescription(declared_args + nodes,)

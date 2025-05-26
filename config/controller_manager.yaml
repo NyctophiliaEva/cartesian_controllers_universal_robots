@@ -79,7 +79,7 @@ cartesian_compliance_controller:
     # controllers will build a kinematic chain from this link up to
     # end_effector_link.  It's also the reference frame for the superposition
     # of error components in all controllers.
-    robot_base_link: "base_link"
+    robot_base_link: "base"
 
     # This is the URDF link of your sensor. Sensor signals are assumed to be
     # given in this frame.  It's important that this link is located somewhere
@@ -119,12 +119,12 @@ cartesian_compliance_controller:
         #- velocity
 
     stiffness:  # w.r.t. compliance_ref_link coordinates
-        trans_x: 500.0
-        trans_y: 500.0
-        trans_z: 500.0
-        rot_x: 20.0
-        rot_y: 20.0
-        rot_z: 20.0
+        trans_x: 300.0  # default = 500
+        trans_y: 300.0
+        trans_z: 300.0
+        rot_x: 15.0     # default = 20
+        rot_y: 15.0
+        rot_z: 15.0
 
     solver:
         error_scale: 0.5
@@ -133,50 +133,31 @@ cartesian_compliance_controller:
 
     # For all controllers, these gains are w.r.t. the robot_base_link coordinates.
     pd_gains:
-        ## No.1 - 增加 d 强化阻尼,尝试缓解振荡 
-        ## [Bad] 产生严重振荡,危险 
-        # trans_x: {p: 0.05, d: 0.01}
-        # trans_y: {p: 0.05, d: 0.01}
-        # trans_z: {p: 0.05, d: 0.01}
-        # rot_x: {p: 1.5, d: 0.5}
-        # rot_y: {p: 1.5, d: 0.5}
-        # rot_z: {p: 1.5, d: 0.5}
-
-        # # No.2 降低 p,d 尝试缓解振荡
-        # # [Potential] 有所缓解,但仍受扰动影响(可人为抑制)
-        # #             考虑处理F/T
-        # # [Normal] 吃力
-        # trans_x: {p: 0.01, d: 0.005}
-        # trans_y: {p: 0.01, d: 0.005}
-        # trans_z: {p: 0.01, d: 0.005}
-        # rot_x: {p: 0.15, d: 0.05}
-        # rot_y: {p: 0.15, d: 0.05}
-        # rot_z: {p: 0.15, d: 0.05}
-
-        # # No.3 提高 D 尝试缓解振荡 
-        # # [Bad] 严重振荡,人为不能抑制,似乎是 D 成分过高
-        # trans_x: {p: 0.01, d: 0.01}
-        # trans_y: {p: 0.01, d: 0.01}
-        # trans_z: {p: 0.01, d: 0.01}
-        # rot_x: {p: 0.15, d: 0.1}
-        # rot_y: {p: 0.15, d: 0.1}
-        # rot_z: {p: 0.15, d: 0.1}
-
-        # No. 4 恢复 D 提高 P 缓解"阻碍感"
-
-        trans_x: {p: 0.05, d: 0.005}
-        trans_y: {p: 0.05, d: 0.005}
-        trans_z: {p: 0.05, d: 0.005}
-        rot_x: {p: 0.3, d: 0.05}
-        rot_y: {p: 0.3, d: 0.05}
-        rot_z: {p: 0.3, d: 0.05}
+        # No.5 缓解"阻碍感"
+        # [good] 相对轻松
+        trans_x: {p: 0.1, d: 0.005}
+        trans_y: {p: 0.1, d: 0.005}
+        trans_z: {p: 0.1, d: 0.005}
+        rot_x: {p: 1.5, d: 0.05}
+        rot_y: {p: 1.5, d: 0.05}
+        rot_z: {p: 1.5, d: 0.05}
 
 cartesian_force_controller:
   ros__parameters:
 
+    force_deadzone: 1.0           # 力死区阈值(N)   default = 1.0
+    torque_deadzone: 0.05         # 力矩死区阈值(Nm) default = 0.05
+    calibration_samples: 100      # 调零采样数量     default = 100
+    auto_calibration_interval: 90.0  # 自动调零间隔(秒) default = 300.0
+    # auto_calibration_interval: 3600.0  # 为了便于realsense采样
+
+    filter_coefficient: 0.05  # 滤波系数(0-1)
+                              # 较小的值会产生更平滑的输出但响应更慢
+                              # 较大的值响应更快但可能保留更多噪声
+
     # See the cartesian_compliance_controller
     end_effector_link: "tool0"
-    robot_base_link: "base_link"
+    robot_base_link: "base"
     ft_sensor_ref_link: "tool0"
     joints:
       - shoulder_pan_joint
@@ -196,48 +177,21 @@ cartesian_force_controller:
         publish_state_feedback: True
 
     pd_gains:
-        ## No.1 - 降低 p 引入 d
-        ## [Normal] 能够工作,但是较为吃力
-        # trans_x: {p: 0.01, d: 0.005}
-        # trans_y: {p: 0.01, d: 0.005}
-        # trans_z: {p: 0.01, d: 0.005}
-        # rot_x: {p: 0.15, d: 0.05}
-        # rot_y: {p: 0.15, d: 0.05}
-        # rot_z: {p: 0.15, d: 0.05}
-
-        # # No.2 去除 d,尝试缓解"阻碍感"
-        # # [No Change] 
-        # trans_x: {p: 0.01}
-        # trans_y: {p: 0.01}
-        # trans_z: {p: 0.01}
-        # rot_x: {p: 0.15}
-        # rot_y: {p: 0.15}
-        # rot_z: {p: 0.15}
-
-        # # No.3 提高 transP,尝试缓解"阻碍感"
-        # # [Potential] trans 有所缓解
-        # trans_x: {p: 0.05}
-        # trans_y: {p: 0.05}
-        # trans_z: {p: 0.05}
-        # rot_x: {p: 0.15}
-        # rot_y: {p: 0.15}
-        # rot_z: {p: 0.15}
-
-        # No.4 提高 rotP,尝试缓解"阻碍感"
-        # 
-        trans_x: {p: 0.05}
-        trans_y: {p: 0.05}
-        trans_z: {p: 0.05}
-        rot_x: {p: 0.5}
-        rot_y: {p: 0.5}
-        rot_z: {p: 0.5}
+        # No.5 提高 P,尝试缓解"阻碍感"
+        # [good]
+        trans_x: {p: 0.08, d: 0.01}
+        trans_y: {p: 0.08, d: 0.01}
+        trans_z: {p: 0.08, d: 0.01}
+        rot_x: {p: 0.8, d: 0.4}
+        rot_y: {p: 0.8, d: 0.4}
+        rot_z: {p: 0.8, d: 0.4}
 
 cartesian_motion_controller:
   ros__parameters:
 
     # See the cartesian_compliance_controller
     end_effector_link: "tool0"
-    robot_base_link: "base_link"
+    robot_base_link: "base"
     joints:
       - shoulder_pan_joint
       - shoulder_lift_joint
@@ -267,7 +221,7 @@ cartesian_motion_controller:
 motion_control_handle:
   ros__parameters:
     end_effector_link: "tool0"
-    robot_base_link: "base_link"
+    robot_base_link: "base"
     ft_sensor_ref_link: "tool0"
     joints:
       - shoulder_pan_joint
