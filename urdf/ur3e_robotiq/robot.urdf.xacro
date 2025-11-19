@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot name="robot" xmlns:xacro="http://wiki.ros.org/xacro">
+
+   <!-- This xacro file combines the UR3e collaborative robotic arm and the Robotiq 2F-85 gripper. -->
+
+   <!-- Include macros for the UR3e and the Robotiq 2f-85 gripper -->
+   <!-- <xacro:include filename="$(find cartesian_controller_simulation)/urdf/ur3e_robotiq/ur3e_urdf.xacro" /> -->
+   <!-- <xacro:include filename="$(find cartesian_controller_simulation)/urdf/ur3e_robotiq/2f85_urdf.xacro" /> -->
+   <xacro:include filename="ur3e_urdf.xacro" />
+   <xacro:include filename="2f85_urdf.xacro" />
+
+</robot>
