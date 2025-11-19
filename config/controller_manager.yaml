@@ -94,7 +94,14 @@ cartesian_compliance_controller:
     # downward pushing forces without generating unwanted offset moments.
     # On the other hand, an application could benefit from yielding a little in
     # the robot's wrist while drawing a line on a surface with a pen.
-    compliance_ref_link: "tool0"
+    compliance_ref_link: "tip0"
+
+    force_deadzone: 0.5           # 力死区阈值(N)   default = 1.0
+    torque_deadzone: 0.05          # 增大力矩死区    default = 0.05
+    enable_auto_calibration: false  # set to false for simulation
+    auto_calibration_interval: 60.0 # check if auto calibration is disabled
+
+    compliance_scale: 0.2         # 0.0=完全刚性, 1.0=完全柔顺(default), 最高5.0, sim good value = 0.608
 
     joints:
       - shoulder_pan_joint
