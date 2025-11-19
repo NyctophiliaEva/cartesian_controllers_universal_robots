@@ -31,12 +31,20 @@
                 com_port="${com_port}"/>
         </xacro:if>
 
-        <!-- cartesian ref link (on gripper) -->
+        <!-- cartesian ref link (on gripper 150mm) -->
         <link name="${prefix}tip0"/>
         <joint name="${prefix}tip0_joint" type="fixed">
             <parent link="tool0" />
             <child link="${prefix}tip0" />
             <origin xyz="0 0 0.15" rpy="0 0 0" />
+        </joint>
+
+        <!-- cartesian ref link (215mm on real gripper, 280mm for better haptic) -->
+        <link name="${prefix}tip_real"/>
+        <joint name="${prefix}tip_real_joint" type="fixed">
+            <parent link="tool0" />
+            <child link="${prefix}tip_real" />
+            <origin xyz="0 0 0.280" rpy="0 0 0" />
         </joint>
 
         <link name="${prefix}robotiq_85_base_link">

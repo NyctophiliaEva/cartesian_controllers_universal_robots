@@ -73,7 +73,7 @@ cartesian_compliance_controller:
     # tool.  When you specify a target_wrench, i.e. some additional forces that
     # your robot should apply to its environment, that target_wrench gets
     # applied in this frame.
-    end_effector_link: "tip0"
+    end_effector_link: "tip_real"
 
     # This is usually the link directly before the first actuated joint.  All
     # controllers will build a kinematic chain from this link up to
@@ -94,7 +94,7 @@ cartesian_compliance_controller:
     # downward pushing forces without generating unwanted offset moments.
     # On the other hand, an application could benefit from yielding a little in
     # the robot's wrist while drawing a line on a surface with a pen.
-    compliance_ref_link: "tip0"
+    compliance_ref_link: "tip_real"
 
     force_deadzone: 0.5           # 力死区阈值(N)   default = 1.0
     torque_deadzone: 0.05          # 增大力矩死区    default = 0.05
@@ -163,7 +163,7 @@ cartesian_force_controller:
                               # 较大的值响应更快但可能保留更多噪声
 
     # See the cartesian_compliance_controller
-    end_effector_link: "tip0"
+    end_effector_link: "tip_real"
     robot_base_link: "base"
     ft_sensor_ref_link: "tool0"
     joints:
@@ -197,7 +197,7 @@ cartesian_motion_controller:
   ros__parameters:
 
     # See the cartesian_compliance_controller
-    end_effector_link: "tip0"
+    end_effector_link: "tip_real"
     robot_base_link: "base"
     joints:
       - shoulder_pan_joint
@@ -227,7 +227,7 @@ cartesian_motion_controller:
 
 motion_control_handle:
   ros__parameters:
-    end_effector_link: "tip0"
+    end_effector_link: "tip_real"
     robot_base_link: "base"
     ft_sensor_ref_link: "tool0"
     joints:
