@@ -25,7 +25,10 @@ def generate_launch_description():
     declared_args = [arg_robot_ip]
 
     # Robot description
-    description_file = PathJoinSubstitution([this_pkg, "urdf", "setup.urdf.xacro"])
+    description_file = PathJoinSubstitution([this_pkg, 
+                                             "urdf/ur3e_robotiq", 
+                                             "robot.urdf.xacro"])
+    # description_file = PathJoinSubstitution([this_pkg, "urdf", "setup.urdf.xacro"])
     robot_ip = LaunchConfiguration("robot_ip")
     robot_description_content = Command(
         [
@@ -52,6 +55,16 @@ def generate_launch_description():
             ('cartesian_compliance_controller/target_frame', 'target_frame'),
             ('cartesian_force_controller/target_wrench', 'target_wrench'),
             ('cartesian_compliance_controller/target_wrench', 'target_wrench'),
+            # HACK: remap /current_pose for RL training
+            ('cartesian_motion_controller/current_pose', 'current_pose'),
+            ('cartesian_force_controller/current_pose', 'current_pose'),
+            ('cartesian_compliance_controller/current_pose', 'current_pose'),
+            # HACK: remap /calib_wrench for RL training
+            ('/cartesian_force_controller/calibration_wrench', 'calib_wrench'),
+            ('/cartesian_compliance_controller/calibration_wrench', 'calib_wrench'),
+            ('/cartesian_force_controller/calibration_wrench_base', 'calib_wrench_base'),
+            ('/cartesian_compliance_controller/calibration_wrench_base', 'calib_wrench_base'),
+            
             ('cartesian_force_controller/ft_sensor_wrench', 'ft_sensor_wrench'),
             ('cartesian_compliance_controller/ft_sensor_wrench', 'ft_sensor_wrench'),
             ('force_torque_sensor_broadcaster/wrench', 'ft_sensor_wrench'),

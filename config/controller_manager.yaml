@@ -73,7 +73,7 @@ cartesian_compliance_controller:
     # tool.  When you specify a target_wrench, i.e. some additional forces that
     # your robot should apply to its environment, that target_wrench gets
     # applied in this frame.
-    end_effector_link: "tool0"
+    end_effector_link: "tip0"
 
     # This is usually the link directly before the first actuated joint.  All
     # controllers will build a kinematic chain from this link up to
@@ -156,7 +156,7 @@ cartesian_force_controller:
                               # 较大的值响应更快但可能保留更多噪声
 
     # See the cartesian_compliance_controller
-    end_effector_link: "tool0"
+    end_effector_link: "tip0"
     robot_base_link: "base"
     ft_sensor_ref_link: "tool0"
     joints:
@@ -190,7 +190,7 @@ cartesian_motion_controller:
   ros__parameters:
 
     # See the cartesian_compliance_controller
-    end_effector_link: "tool0"
+    end_effector_link: "tip0"
     robot_base_link: "base"
     joints:
       - shoulder_pan_joint
@@ -220,7 +220,7 @@ cartesian_motion_controller:
 
 motion_control_handle:
   ros__parameters:
-    end_effector_link: "tool0"
+    end_effector_link: "tip0"
     robot_base_link: "base"
     ft_sensor_ref_link: "tool0"
     joints:
