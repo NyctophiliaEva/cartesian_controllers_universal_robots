@@ -15,7 +15,7 @@
         sim_isaac:=false
         use_fake_hardware:=false
         fake_sensor_commands:=false
-        include_ros2_control:=true
+        include_ros2_control:=false
         com_port:=/dev/ttyUSB0">
 
         <!-- ros2 control include -->
